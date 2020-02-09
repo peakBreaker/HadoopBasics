@@ -1,4 +1,4 @@
-package com.peakbreaker;
+package com.test.wordcount;
 
 import java.io.IOException;
 import java.util.*;
