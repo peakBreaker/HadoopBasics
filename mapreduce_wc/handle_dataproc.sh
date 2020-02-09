@@ -13,12 +13,12 @@ if [[ $1 = 'setup' ]]; then
   gsutil mb -l $GCP_REGION -p $GCP_PROJECT gs://$OUT_BUCKET
   gsutil -m cp gs://pub/shakespeare/*.txt gs://$IN_BUCKET/input-shakespeare
 
-elif [[ $1 = 'run' ]]; then
-
-  # Dataproc
+  # Set up dataproc cluster
   gcloud dataproc clusters create $CLUSTER_NAME --region $GCP_REGION --subnet default --zone $GCP_ZONE --single-node --master-machine-type n1-standard-1 --master-boot-disk-size 15 --image-version 1.3-deb9 --project $GCP_PROJECT
 
-  # Compile and run
+elif [[ $1 = 'run' ]]; then
+
+  # Compile and run on dataproc
   mvn clean install && gcloud dataproc jobs submit hadoop --region europe-north1 --cluster $CLUSTER_NAME --class com.test.wordcount.WordCount --jars target/wordcount-1.0-SNAPSHOT.jar -- gs://$IN_BUCKET/input-shakespeare gs://$OUT_BUCKET/output-shakespeare-wc/
 
 elif [[ $1 = 'clean' ]]; then
